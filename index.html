@@ -2,183 +2,151 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>2026 澳洲維多利亞：袋熊與山林慢遊</title>
-    <script src="https://cdn.tailwindcss.com/"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
         body {
             font-family: 'Noto Sans TC', -apple-system, sans-serif;
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
+            -webkit-tap-highlight-color: transparent;
         }
         .tab-active {
-            background-color: #10b981;
+            background-color: #059669;
             color: white;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
         }
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .glass-effect {
+        .glass-header {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
-        .fade-in {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* 優化手機觸控範圍 */
-        button, a {
-            touch-action: manipulation;
-        }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
     </style>
 </head>
-<body class="max-w-md mx-auto min-h-screen pb-28 relative shadow-2xl bg-white">
+<body class="max-w-md mx-auto min-h-screen pb-32 relative bg-slate-50">
 
-    <!-- 頂部導航 -->
-    <header class="glass-effect sticky top-0 z-50 border-b border-emerald-100">
-        <div class="px-5 py-4 flex items-center justify-between">
-            <div>
-                <h1 class="text-xl font-black text-emerald-800 tracking-tight">2026/10 澳洲與袋熊邂逅</h1>
-                <p class="text-[11px] font-bold text-emerald-600 uppercase tracking-widest">Wombat & Kangaroo Expedition</p>
+    <!-- 頂部區塊 -->
+    <header class="glass-header sticky top-0 z-50 border-b border-emerald-100">
+        <div class="px-6 py-5">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">2026 澳洲慢遊</h1>
+                    <p class="text-xs font-bold text-emerald-600 uppercase tracking-widest">Wombat & Kangaroo Expedition</p>
+                </div>
+                <div class="bg-emerald-600 text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg shadow-emerald-100">
+                    10 DAYS
+                </div>
             </div>
-            <div class="text-right">
-                <span class="inline-block bg-emerald-100 text-emerald-700 text-[10px] font-black px-2 py-1 rounded-md">10 DAYS</span>
+            
+            <!-- 滑動日期選單 -->
+            <div id="tabs" class="flex overflow-x-auto hide-scrollbar space-x-3 py-1">
+                <!-- 由 JS 生成 -->
             </div>
-        </div>
-        
-        <!-- 日期切換器 (可滑動) -->
-        <div id="tabs" class="flex overflow-x-auto hide-scrollbar px-4 pb-3 space-x-2">
-            <!-- 由 JS 生成 -->
         </div>
     </header>
 
-    <!-- 行程內容區 -->
-    <main id="content" class="px-5 pt-6 pb-10">
+    <!-- 行程內容 -->
+    <main id="content" class="px-6 pt-6">
         <!-- 由 JS 生成 -->
     </main>
 
-    <!-- 底部功能選單 -->
-    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto glass-effect border-t border-gray-100 px-4 py-3 flex justify-around items-center shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-[60]">
-        <button onclick="switchDay(currentDay)" class="flex flex-col items-center transition-colors text-emerald-600">
-            <i class="fa-solid fa-calendar-day text-lg mb-1"></i>
-            <span class="text-[10px] font-bold">每日行程</span>
+    <!-- 底部功能列 -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-[360px] glass-header border border-white/50 rounded-3xl px-2 py-3 flex justify-around items-center shadow-2xl z-50">
+        <button onclick="switchDay(currentDay)" class="flex flex-col items-center text-emerald-600 px-3">
+            <i class="fa-solid fa-map-location-dot text-xl mb-1"></i>
+            <span class="text-[9px] font-bold">每日行程</span>
         </button>
-        <button onclick="showInfo('strategy')" class="flex flex-col items-center text-gray-400">
-            <i class="fa-solid fa-cloud-sun text-lg mb-1"></i>
-            <span class="text-[10px] font-bold">天氣策略</span>
+        <button onclick="showInfo('strategy')" class="flex flex-col items-center text-slate-400 px-3">
+            <i class="fa-solid fa-cloud-sun text-xl mb-1"></i>
+            <span class="text-[9px] font-bold">天氣策略</span>
         </button>
-        <button onclick="showInfo('driving')" class="flex flex-col items-center text-gray-400">
-            <i class="fa-solid fa-car-side text-lg mb-1"></i>
-            <span class="text-[10px] font-bold">交通注意</span>
+        <button onclick="showInfo('driving')" class="flex flex-col items-center text-slate-400 px-3">
+            <i class="fa-solid fa-car-side text-xl mb-1"></i>
+            <span class="text-[9px] font-bold">自駕重點</span>
         </button>
-        <button onclick="showInfo('shopping')" class="flex flex-col items-center text-gray-400">
-            <i class="fa-solid fa-bag-shopping text-lg mb-1"></i>
-            <span class="text-[10px] font-bold">必買清單</span>
+        <button onclick="showInfo('shopping')" class="flex flex-col items-center text-slate-400 px-3">
+            <i class="fa-solid fa-basket-shopping text-xl mb-1"></i>
+            <span class="text-[9px] font-bold">必買清單</span>
         </button>
     </nav>
 
     <script>
         const itineraryData = [
-            {
-                day: 1, date: "10/18 (日)", label: "抵達與啟程",
-                items: [
-                    { time: "11:40", title: "抵達墨爾本機場 (MEL)", loc: "Melbourne Airport", desc: "辦理入境。搭接駁車去 APEX 取車 (接駁處在 PARKROYAL 前)。" },
-                    { time: "14:00", title: "取車出發 (重要分流陷阱)", loc: "Apex Car Rentals Melbourne Airport", desc: "過橋時請開左邊第2或第3條車道。下橋後車道立即分流，最左進市區，最右往Geelong。" },
-                    { time: "16:00", title: "Woolworths 採買", loc: "Woolworths Leongatha", desc: "買齊未來4天在 Wilsons Prom 的食材。必買：指橙、血橙。" },
-                    { time: "17:00", title: "Check-in 休息", loc: "Meeniyan Motel", desc: "適應時差，房內有按摩浴缸。" }
-                ]
-            },
-            {
-                day: 2, date: "10/19 (一)", label: "前進袋熊國度 (W1)",
-                items: [
-                    { time: "09:30", title: "Agnes Falls", loc: "Agnes Falls", desc: "觀賞壯觀瀑布。車程約40分鐘。" },
-                    { time: "11:00", title: "Foster IGA 最後大型補給", loc: "Foster IGA + Liquor", desc: "這是最後補給食材的機會。務必買齊未來4天所需！" },
-                    { time: "14:00", title: "Check-in Tidal River", loc: "Tidal River Cabins", desc: "熟悉環境。若大晴天優先前往 Squeaky Beach。" },
-                    { time: "17:30", title: "袋熊尋蹤時刻", loc: "Tidal River", desc: "小木屋附近散步，尋找野生袋熊。牠們常在黃昏出沒。" }
-                ]
-            },
-            {
-                day: 3, date: "10/20 (二)", label: "山海之巔 (W2)",
-                items: [
-                    { time: "09:00", title: "Mt Oberon Summit Walk", loc: "Mt Oberon Summit Walk", desc: "360度俯瞰半島海景。晴天必去！(約2小時)" },
-                    { time: "13:30", title: "Squeaky Beach", loc: "Squeaky Beach", desc: "白石英沙灘「啾啾」聲。晴天海水呈寶石藍。" },
-                    { time: "16:00", title: "Whisky Bay", loc: "Whisky Bay", desc: "看巨石與浪花。建議今天回木屋洗衣服。" }
-                ]
-            },
-            {
-                day: 4, date: "10/21 (三)", label: "雨林與草原 (W3)",
-                items: [
-                    { time: "09:30", title: "Lilly Pilly Gully", loc: "Lilly Pilly Gully Circuit", desc: "溫帶雨林步道，適合陰雨天。一圈約3小時。" },
-                    { time: "14:00", title: "Pillar Point Lookout", loc: "Pillar Point Lookout", desc: "壯闊海岸景觀。來回約2小時。" },
-                    { time: "17:30", title: "Prom Wildlife Walk", loc: "Prom Wildlife Walk", desc: "草原區尋找鴯鶓 (Emu) 和袋鼠。" }
-                ]
-            },
-            {
-                day: 5, date: "10/22 (四)", label: "溫泉與森林",
-                items: [
-                    { time: "12:00", title: "蜂蜜與麵包", loc: "Pure Peninsula Honey", desc: "買蜂蜜。接著去 Miller's Bread Kitchen 買酸種麵包。" },
-                    { time: "14:30", title: "Arthurs Seat Lookout", loc: "Arthurs Seat Lookout", desc: "尤加利森林俯瞰港灣風景。" },
-                    { time: "16:00", title: "半島溫泉泡湯", loc: "Peninsula Hot Springs", desc: "預約制，下雨天泡湯臉冰身體熱很享受。" },
-                    { time: "18:00", title: "Check-in Rosebud", loc: "Bayview Motel Rosebud-Rye", desc: "晚餐在附近 Woolworths 覓食。" }
-                ]
-            },
-            {
-                day: 6, date: "10/23 (五)", label: "人車渡輪大移動",
-                items: [
-                    { time: "10:00", title: "Searoad Ferries", loc: "Searoad Ferries - Sorrento", desc: "連人帶車上船。體驗40分鐘跨海航行。" },
-                    { time: "13:00", title: "Ballarat 午餐", loc: "Stockland Wendouree", desc: "大購物中心簡單午餐與短暫休整。" },
-                    { time: "15:00", title: "Ararat 最後補給", loc: "Woolworths Ararat", desc: "進入格蘭屏前補齊未來3天所需食材。" },
-                    { time: "17:00", title: "抵達 Halls Gap", loc: "NRMA Halls Gap Holiday Park", desc: "袋鼠會直接在小木屋草地旁出沒。" }
-                ]
-            },
-            {
-                day: 7, date: "10/24 (六)", label: "格蘭屏：袋鼠與絕景",
-                items: [
-                    { time: "09:30", title: "Boroka Lookout", loc: "Boroka Lookout", desc: "懸崖俯瞰景觀。開車即達，免走路。" },
-                    { time: "11:00", title: "惡魔之口", loc: "The Balconies", desc: "看鱷魚嘴岩石，輕鬆步道約1小時。" },
-                    { time: "13:30", title: "Halls Gap Bakery", loc: "Halls Gap Bakery", desc: "知名肉派店，澳洲必吃快餐。" },
-                    { time: "16:30", title: "袋鼠大軍 (湖畔)", loc: "Lake Bellfield lookout", desc: "極推薦！壯闊山景加野生袋鼠，無觀光味。" }
-                ]
-            },
-            {
-                day: 8, date: "10/25 (日)", label: "經典挑戰 (G3)",
-                items: [
-                    { time: "09:30", title: "The Pinnacle (巔峰)", loc: "The Pinnacle Lookout", desc: "天晴必去！俯瞰 Halls Gap 山谷絕景。" },
-                    { time: "14:30", title: "麥肯錫瀑布", loc: "MacKenzie Falls", desc: "維州最大瀑布，雨天水量更澎湃。" },
-                    { time: "16:30", title: "球場袋鼠", loc: "Halls Gap Recreation Reserve", desc: "鎮上遊客中心旁的球場，袋鼠極多。" }
-                ]
-            },
-            {
-                day: 9, date: "10/26 (一)", label: "維多利亞時代漫步",
-                items: [
-                    { time: "11:00", title: "最後大採購", loc: "Stockland Wendouree", desc: "最後的大型購物中心行程。" },
-                    { time: "14:00", title: "Lydiard St 建築街", loc: "Lydiard St Ballarat", desc: "保存完美的維多利亞建築街，電影感十足。" },
-                    { time: "15:00", title: "湖畔植物園", loc: "Ballarat Botanical Gardens", desc: "Lake Wendouree 湖畔散步。" },
-                    { time: "16:00", title: "疏芬山門口", loc: "Sovereign Hill", desc: "在充滿復古風情的門口拍照留念。" }
-                ]
-            },
-            {
-                day: 10, date: "10/27 (二)", label: "動物留念與還車",
-                items: [
-                    { time: "10:00", title: "Ballarat Wildlife Park", loc: "Ballarat Wildlife Park", desc: "尋找袋熊並與澳洲動物做最後告別。" },
-                    { time: "15:00", title: "DFO 最後採買", loc: "DFO Essendon", desc: "機場旁的 Outlet 做最後伴手禮衝刺。" },
-                    { time: "19:00", title: "加油還車", loc: "Andrew's Airport Parking", desc: "機場 BP 加油後至 Andrew's 辦理還車。" }
-                ]
-            }
+            { day: 1, date: "10/18 (日)", label: "抵達與啟程", items: [
+                { time: "11:40", title: "抵達機場與取車", loc: "PARKROYAL Melbourne Airport (接駁車處)", desc: "抵達 MEL。搭接駁車至 APEX 取車。取車後下載 Linkt App 並購買 Melbourne Pass。" },
+                { time: "14:00", title: "駕駛陷阱注意 (CityLink)", loc: "Apex Car Rentals Melbourne Airport", desc: "上 M2 橋跨越雅拉河時，請開「左二」或「左三」車道。隧道內 GPS 易失靈，出隧道後注意往 SE Suburbs 方向。" },
+                { time: "16:00", title: "Woolworths 採買", loc: "Woolworths Leongatha", desc: "買齊未來4天食材。必看：指橙 (Finger Lime)、血橙 (Blood Orange)。順便買保冷袋裝肉類。" },
+                { time: "17:00", title: "住宿：Meeniyan Motel", loc: "Meeniyan Motel", desc: "適應時差。房內有微波爐與按摩浴缸，早點休息。" }
+            ]},
+            { day: 2, date: "10/19 (一)", label: "前進袋熊國度 (W1)", items: [
+                { time: "09:30", title: "Agnes Falls 瀑布", loc: "Agnes Falls", desc: "觀賞壯觀瀑布。車程約 40 分鐘。" },
+                { time: "11:00", title: "Foster IGA 最後補給", loc: "Foster IGA + Liquor", desc: "進公園前最後大型超市！務必買齊未來4天食材與飲水。" },
+                { time: "14:00", title: "Check-in 小木屋", loc: "Tidal River Cabins", desc: "熟悉園區。若天氣大好，直接前往 Squeaky Beach Car Park。" },
+                { time: "17:30", title: "黃金時刻 (袋熊時間)", loc: "Tidal River Cabins (營區附近)", desc: "營區散步尋找野生袋熊，牠們通常在黃昏像里長伯一樣巡邏。" }
+            ]},
+            { day: 3, date: "10/20 (二)", label: "威爾遜岬：山海絕景 (W2)", items: [
+                { time: "09:00", title: "Mt Oberon 海景健行", loc: "Telegraph Saddle Car Park", desc: "整趟旅程最震撼海景。原路折返 2 小時。晴天一定要去！" },
+                { time: "13:30", title: "Squeaky Beach", loc: "Squeaky Beach Car Park", desc: "石英砂「啾啾」聲沙灘。可在海岸線步道散步，風景優美。" },
+                { time: "16:00", title: "Whisky Bay 巨石", loc: "Whisky Bay Car Park", desc: "觀賞壯觀巨石與浪花。今天記得洗衣服 (累積 3 天份)。" }
+            ]},
+            { day: 4, date: "10/21 (三)", label: "威爾遜岬：森林與動物 (W3)", items: [
+                { time: "09:30", title: "Lilly Pilly Gully 雨林步道", loc: "Lilly Pilly Gully Carpark", desc: "平緩雨林步道，適合陰天或避暑。一圈約 3 小時。" },
+                { time: "14:00", title: "Pillar Point 看台", loc: "Tidal River Cabins (步行起點)", desc: "從住處出發，來回約 2 小時，觀看壯闊海岸線。" },
+                { time: "17:00", title: "Prom Wildlife Walk", loc: "Prom Wildlife Walk (草原)", desc: "開闊草原區，保證能看到鴯鶓 (Emu) 和袋鼠。" }
+            ]},
+            { day: 5, date: "10/22 (四)", label: "溫泉放鬆日", items: [
+                { time: "12:00", title: "蜂蜜與酸種麵包", loc: "Pure Peninsula Honey", desc: "買蜂蜜(推薦 Yellow Box)。再去 Miller's Bread Kitchen 買麵包。" },
+                { time: "14:30", title: "Arthurs Seat Lookout", loc: "Arthurs Seat Lookout", desc: "沉浸在尤加利森林中俯瞰港灣。" },
+                { time: "16:00", title: "半島溫泉 (Bath House)", loc: "Peninsula Hot Springs", desc: "預約制，下雨泡湯臉冰身體熱很享受。泡完後去 Rosebud 住宿。" },
+                { time: "18:00", title: "斯參克角燈塔 (看風景)", loc: "Cape Schanck Lighthouse (停車場)", desc: "看壯麗燈塔地形。注意：避開 400 階長階梯，只走看台。" }
+            ]},
+            { day: 6, date: "10/23 (五)", label: "渡輪與格蘭屏移動 (G1)", items: [
+                { time: "10:00", title: "跨海渡輪 (Sorrento)", loc: "Searoad Ferries - Sorrento", desc: "人車同船跨海。需提早 40 分鐘報到。航程約 40 分鐘。" },
+                { time: "13:00", title: "Ballarat 補給與午餐", loc: "Stockland Wendouree", desc: "中途大型購物中心，休息與用餐。" },
+                { time: "15:00", title: "Ararat 最後食材補給", loc: "Woolworths Ararat", desc: "進入格蘭屏前的最後大補給。買齊 3 天食材。" },
+                { time: "17:00", title: "抵達 Halls Gap", loc: "NRMA Halls Gap Holiday Park", desc: "傍晚袋鼠會直接跳到營地小木屋旁吃草。" }
+            ]},
+            { day: 7, date: "10/24 (六)", label: "格蘭屏：懸崖與袋鼠 (G2)", items: [
+                { time: "09:30", title: "Boroka Lookout 絕景", loc: "Boroka Lookout", desc: "格蘭屏明信片景點。停車即達，俯瞰山谷。" },
+                { time: "11:00", title: "惡魔之口 (鱷魚嘴)", loc: "Reed Lookout (停車場)", desc: "輕鬆步道看惡魔之口岩石，往返約 1 小時。" },
+                { time: "13:30", title: "Halls Gap 覓食", loc: "Halls Gap Bakery", desc: "推薦知名肉派。逛在地雜貨店與原住民文化中心。" },
+                { time: "16:30", title: "袋鼠大軍 (湖畔)", loc: "Lake Bellfield lookout", desc: "極推！背景壯麗，袋鼠多且自然，無觀光味。" }
+            ]},
+            { day: 8, date: "10/25 (日)", label: "格蘭屏：巔峰挑戰 (G3)", items: [
+                { time: "09:30", title: "The Pinnacle 巔峰看台", loc: "Sundial Carpark", desc: "天晴必去！俯瞰 Halls Gap 全景。岩石地形，小心行走。" },
+                { time: "14:30", title: "麥肯錫瀑布", loc: "MacKenzie Falls Car Park", desc: "維州最大瀑布。水量大，階梯濕滑請小心走。" },
+                { time: "16:30", title: "鎮上球場袋鼠", loc: "Halls Gap Recreation Reserve", desc: "遊客集散地。想看超多袋鼠來這球場準沒錯。" }
+            ]},
+            { day: 9, date: "10/26 (一)", label: "維多利亞時代漫步", items: [
+                { time: "11:00", title: "Wendouree 最後購物", loc: "Stockland Wendouree", desc: "大型商場最後購物，補齊要帶回台灣的禮物。" },
+                { time: "14:00", title: "Lydiard St 歷史建築街", loc: "Lydiard St (Historic Post Box)", desc: "澳洲保存最完整建築街。純散步拍照，感受歷史感。" },
+                { time: "15:00", title: "植物園與湖畔散步", loc: "Pipers by the Lake (停車處)", desc: "Lake Wendouree 湖畔散步，風景如畫。" },
+                { time: "16:00", title: "住宿：Bakery Hill Motel", loc: "Bakery Hill Motel", desc: "房內有微波爐。回程前整理行李。" }
+            ]},
+            { day: 10, date: "10/27 (二)", label: "最後留念與回程", items: [
+                { time: "10:00", title: "與袋熊最後相會", loc: "Ballarat Wildlife Park", desc: "別忘了詢問 Wombat encounter！這裡是看袋熊最後機會。" },
+                { time: "15:00", title: "DFO 最後血拼", loc: "DFO Essendon", desc: "機場旁 Outlet。把握最後免稅店與伴手禮採買。" },
+                { time: "19:00", title: "還車手續", loc: "Andrew's Airport Parking (還車點)", desc: "在機場 BP 加油後還車。搭接駁車去機場，23:20 起飛。" }
+            ]}
         ];
 
         let currentDay = 1;
 
         function renderTabs() {
-            const tabsContainer = document.getElementById('tabs');
-            tabsContainer.innerHTML = itineraryData.map(data => `
-                <button onclick="switchDay(${data.day})" id="tab-day-${data.day}" class="whitespace-nowrap px-6 py-2 rounded-full text-xs font-bold transition-all ${currentDay === data.day ? 'tab-active' : 'bg-gray-100 text-gray-500'}">
-                    DAY ${data.day}
+            const tabs = document.getElementById('tabs');
+            tabs.innerHTML = itineraryData.map(d => `
+                <button onclick="switchDay(${d.day})" id="tab-day-${d.day}" class="whitespace-nowrap px-6 py-2.5 rounded-2xl text-[11px] font-black transition-all duration-300 ${currentDay === d.day ? 'tab-active' : 'bg-slate-100 text-slate-400'}">
+                    DAY ${d.day}
                 </button>
             `).join('');
         }
@@ -189,86 +157,56 @@
             renderContent();
             const activeTab = document.getElementById(`tab-day-${day}`);
             activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function renderContent() {
-            const contentContainer = document.getElementById('content');
+            const content = document.getElementById('content');
             const data = itineraryData.find(d => d.day === currentDay);
+            let html = `<div class="mb-8 fade-in"><p class="text-emerald-600 font-bold text-[10px] tracking-[0.2em] mb-1">${data.date}</p><h2 class="text-3xl font-black text-slate-800">${data.label}</h2></div>`;
             
-            let html = `
-                <div class="mb-8 fade-in">
-                    <div class="flex items-center space-x-2 mb-2 text-emerald-600 font-bold text-xs uppercase tracking-tighter">
-                        <i class="fa-solid fa-calendar-check"></i>
-                        <span>${data.date}</span>
-                    </div>
-                    <h2 class="text-3xl font-black text-gray-800 leading-none">${data.label}</h2>
-                </div>
-            `;
-            
-            html += data.items.map((item, index) => `
-                <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 p-6 mb-6 fade-in" style="animation-delay: ${index * 0.1}s">
-                    <div class="flex items-start justify-between mb-4">
-                        <span class="bg-emerald-50 text-emerald-700 text-xs font-black px-3 py-1.5 rounded-xl border border-emerald-100">
-                            ${item.time}
-                        </span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">${item.title}</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed mb-6 font-medium">${item.desc}</p>
-                    
-                    <div class="flex items-center justify-between pt-5 border-t border-gray-50">
-                        <div class="flex items-center text-gray-400 text-[10px] font-bold">
-                            <i class="fa-solid fa-location-dot mr-1.5 text-emerald-400"></i>
-                            <span class="truncate max-w-[140px] uppercase">${item.loc}</span>
+            html += data.items.map((item, i) => `
+                <div class="bg-white rounded-[2.5rem] card-shadow p-7 mb-6 fade-in border border-slate-50" style="animation-delay: ${i*0.1}s">
+                    <span class="inline-block bg-slate-50 text-slate-500 text-[10px] font-black px-3 py-1 rounded-full mb-4">${item.time}</span>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">${item.title}</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6 font-medium">${item.desc}</p>
+                    <div class="flex items-center justify-between pt-5 border-t border-slate-50">
+                        <div class="flex items-center text-slate-300 text-[9px] font-bold tracking-wider">
+                            <i class="fa-solid fa-square-p mr-2 text-emerald-400"></i>
+                            <span class="truncate max-w-[120px] uppercase">${item.loc}</span>
                         </div>
-                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.loc)}" 
-                           target="_blank"
-                           class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-2xl text-[11px] font-black shadow-lg shadow-emerald-100 transition-all active:scale-95">
-                            <i class="fa-solid fa-diamond-turn-right mr-1.5"></i> 開啟導航
+                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.loc)}" target="_blank" class="bg-slate-900 text-white px-6 py-3 rounded-2xl text-[10px] font-black shadow-xl active:scale-95 transition-all">
+                            導航停車場
                         </a>
                     </div>
                 </div>
             `).join('');
-            
-            contentContainer.innerHTML = html;
+            content.innerHTML = html;
         }
 
         function showInfo(type) {
-            let title = "", text = "";
-            if(type === 'strategy') {
-                title = "☀️ 天氣與動物策略";
-                text = "● 必看晴天 (等級 S)：Mt Oberon、Squeaky Beach、The Pinnacle。若當天天氣好，請務必優先前往！\n\n● 動物靈魂景點：\n- 袋熊：Tidal River (17:00-19:00)\n- 袋鼠：Halls Gap 湖畔或營地後方\n- 鴯鶓：Prom Wildlife Walk\n\n● 雨天建議：Lilly Pilly Gully、麥肯錫瀑布、半島溫泉。";
-            } else if(type === 'driving') {
-                title = "🚗 駕駛與導航提醒";
-                text = "1. 動物出沒：清晨與黃昏有大量袋鼠/袋熊，絕對避免夜間高速駕駛。\n2. 市區分流：機場取車上 M2 橋請靠左二車道。\n3. 導航設定：離開 Halls Gap 回程時，先導航至 Ararat 接高速公路，避免誤入碎石小路。";
-            } else if(type === 'shopping') {
-                title = "🛒 必買清單";
-                text = "● 蜂蜜：Grey Box、Yellow Box。\n● 茶包：Twinings 限定款、T2 墨爾本早餐茶。\n● 超市：蘋果醬、夏威夷果、不嗜睡暈車藥。";
-            }
+            const info = {
+                strategy: ["☀️ 天氣策略", 
+                "等級 S (晴天必衝)：\n- Mt Oberon: 360度極致海景，霧天會白牆。\n- Squeaky Beach: 陽光下海水才呈寶石藍。\n- The Pinnacle: 俯瞰山谷需清晰視野，雨天石滑危險。\n- Boroka Lookout: 格蘭屏明信片懸崖。\n\n動物尋蹤：\n- 袋熊：Tidal River 營區 (每天 17-19 點)。\n- 袋鼠：Halls Gap 湖畔或營地後方草地。\n- 非洲動物：Werribee 動物園 Safari Bus。"],
+                
+                driving: ["🚗 駕駛注意", 
+                "動物警告：\nWilsons Prom 與 Halls Gap 傍晚有大量袋鼠/袋熊，請絕對避免夜間高速駕駛。\n\n分流陷阱：\n機場取車上 M2 橋請靠左二或左三車道。隧道內 GPS 易失靈，請預先記下出口方向。\n\n路況判斷：\n黃色粗線是好路。離開 Halls Gap 去 Werribee 時，請先導航至 Ararat 接高速，避免被導航帶進鄉間碎石路。"],
+                
+                shopping: ["🛒 必買清單", 
+                "超市攻略：\n- 指橙 (Finger Lime): 澳洲原生「魚子醬」水果。\n- 血橙 (Blood Orange): 澳洲產季必吃。\n- 蜂蜜：Grey Box, Yellow Box 尤加利系列。\n- 茶類：Twinings 澳洲限定、T2 墨爾本早餐茶。\n- 藥妝：不嗜睡暈車藥、尤加利精油、保冷袋。"]
+            }[type];
             
             const modal = document.createElement('div');
-            modal.className = "fixed inset-0 bg-gray-900/60 z-[100] flex items-center justify-center p-6 backdrop-blur-sm fade-in";
-            modal.innerHTML = `
-                <div class="bg-white rounded-[2rem] w-full max-w-sm p-8 shadow-2xl relative">
-                    <button onclick="this.parentElement.parentElement.remove()" class="absolute top-6 right-6 text-gray-400">
-                        <i class="fa-solid fa-circle-xmark text-2xl"></i>
-                    </button>
-                    <h3 class="text-2xl font-black mb-6 text-emerald-800 leading-tight">${title}</h3>
-                    <div class="text-gray-600 text-sm whitespace-pre-wrap leading-loose font-medium overflow-y-auto max-h-[50vh] pr-2">
-                        ${text}
-                    </div>
-                    <button onclick="this.parentElement.parentElement.remove()" class="w-full mt-8 bg-emerald-600 text-white py-4 rounded-2xl font-black shadow-xl shadow-emerald-100">
-                        我知道了
-                    </button>
-                </div>
-            `;
+            modal.className = "fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-8 backdrop-blur-md fade-in";
+            modal.innerHTML = `<div class="bg-white rounded-[3rem] w-full max-w-sm p-10 shadow-2xl relative">
+                <h3 class="text-2xl font-black mb-6 text-slate-800 leading-tight">${info[0]}</h3>
+                <div class="text-slate-500 text-sm whitespace-pre-wrap leading-relaxed mb-8 font-medium overflow-y-auto max-h-[50vh]">${info[1]}</div>
+                <button onclick="this.parentElement.parentElement.remove()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-emerald-100">關閉</button>
+            </div>`;
             document.body.appendChild(modal);
         }
 
-        window.onload = () => {
-            renderTabs();
-            renderContent();
-        };
+        window.onload = () => { renderTabs(); renderContent(); };
     </script>
 </body>
 </html>
