@@ -83,32 +83,33 @@
     <script>
         const itineraryData = [
             { day: 1, date: "10/18 (日)", label: "抵達與啟程", items: [
-                { time: "11:40", title: "抵達機場與取車", loc: "PARKROYAL Melbourne Airport (接駁車處)", desc: "抵達 MEL。搭接駁車至 APEX 取車。取車後下載 Linkt App 並購買 Melbourne Pass。" },
-                { time: "14:00", title: "駕駛陷阱注意 (CityLink)", loc: "Apex Car Rentals Melbourne Airport", desc: "上 M2 橋跨越雅拉河時，請開「左二」或「左三」車道。隧道內 GPS 易失靈，出隧道後注意往 SE Suburbs 方向。" },
+                { time: "11:40", title: "抵達機場 (接駁車處)", loc: "PARKROYAL Melbourne Airport", desc: "抵達 MEL 入境。搭接駁車至 APEX 取車 (接駁處在 PARKROYAL 前)。" },
+                { time: "14:00", title: "取車出發 (CityLink 陷阱)", loc: "Apex Car Rentals Melbourne Airport", desc: "上 M2 橋跨越雅拉河時，請開「左二」或「左三」車道。隧道內 GPS 易失靈，出隧道後注意往 SE Suburbs 分流。" },
                 { time: "16:00", title: "Woolworths 採買", loc: "Woolworths Leongatha", desc: "買齊未來4天食材。必看：指橙 (Finger Lime)、血橙 (Blood Orange)。順便買保冷袋裝肉類。" },
-                { time: "17:00", title: "住宿：Meeniyan Motel", loc: "Meeniyan Motel", desc: "適應時差。房內有微波爐與按摩浴缸，早點休息。" }
+                { time: "17:00", title: "住宿 Check-in", loc: "Meeniyan Motel", desc: "適應時差。房內有微波爐與按摩浴缸，早點休息。" }
             ]},
             { day: 2, date: "10/19 (一)", label: "前進袋熊國度 (W1)", items: [
                 { time: "09:30", title: "Agnes Falls 瀑布", loc: "Agnes Falls", desc: "觀賞壯觀瀑布。車程約 40 分鐘。" },
-                { time: "11:00", title: "Foster IGA 最後補給", loc: "Foster IGA + Liquor", desc: "進公園前最後大型超市！務必買齊未來4天食材與飲水。" },
+                { time: "11:00", title: "Foster IGA 最後補給", loc: "Foster IGA + Liquor", desc: "進公園前最後大型超市！務必買齊未來4天食材與飲水。可停 IGA 停車場。" },
                 { time: "14:00", title: "Check-in 小木屋", loc: "Tidal River Cabins", desc: "熟悉園區。若天氣大好，直接前往 Squeaky Beach Car Park。" },
-                { time: "17:30", title: "黃金時刻 (袋熊時間)", loc: "Tidal River Cabins (營區附近)", desc: "營區散步尋找野生袋熊，牠們通常在黃昏像里長伯一樣巡邏。" }
+                { time: "17:30", title: "黃金時刻 (袋熊時間)", loc: "Tidal River Cabins", desc: "在小木屋附近散步，尋找野生袋熊，牠們通常在黃昏像里長伯一樣巡邏。" }
             ]},
             { day: 3, date: "10/20 (二)", label: "威爾遜岬：山海絕景 (W2)", items: [
                 { time: "09:00", title: "Mt Oberon 海景健行", loc: "Telegraph Saddle Car Park", desc: "整趟旅程最震撼海景。原路折返 2 小時。晴天一定要去！" },
-                { time: "13:30", title: "Squeaky Beach", loc: "Squeaky Beach Car Park", desc: "石英砂「啾啾」聲沙灘。可在海岸線步道散步，風景優美。" },
-                { time: "16:00", title: "Whisky Bay 巨石", loc: "wilsons prom Whisky Bay", desc: "觀賞壯觀巨石與浪花。今天記得洗衣服 (累積 3 天份)。" }
+                { time: "13:30", title: "Squeaky Beach", loc: "Squeaky Beach Car Park", desc: "石英砂「啾啾」聲沙灘。可在海岸線步道散步。" },
+                { time: "16:00", title: "Whisky Bay 巨石", loc: "Whisky Bay Car Park", desc: "觀賞壯觀巨石與浪花。今天建議回小木屋洗衣服 (三天份)。" }
             ]},
             { day: 4, date: "10/21 (三)", label: "威爾遜岬：森林與動物 (W3)", items: [
                 { time: "09:30", title: "Lilly Pilly Gully 雨林步道", loc: "Lilly Pilly Gully Carpark", desc: "平緩雨林步道，適合陰天或避暑。一圈約 3 小時。" },
-                { time: "14:00", title: "Pillar Point 看台", loc: "Tidal River Cabins (步行起點)", desc: "從住處出發，來回約 2 小時，觀看壯闊海岸線。" },
-                { time: "17:00", title: "Prom Wildlife Walk", loc: "Prom Wildlife Walk (草原)", desc: "開闊草原區，保證能看到鴯鶓 (Emu) 和袋鼠。" }
+                { time: "14:00", title: "Pillar Point 看台", loc: "Tidal River Cabins", desc: "從住處出發，來回約 2 小時，觀看壯闊海岸線。" },
+                { time: "17:00", title: "Prom Wildlife Walk", loc: "Prom Wildlife Walk", desc: "開闊草原區，保證能看到鴯鶓 (Emu) 和袋鼠。" }
             ]},
             { day: 5, date: "10/22 (四)", label: "溫泉放鬆日", items: [
-                { time: "12:00", title: "蜂蜜與酸種麵包", loc: "Pure Peninsula Honey", desc: "買蜂蜜(推薦 Yellow Box)。再去 Miller's Bread Kitchen 買麵包。" },
+                { time: "12:00", title: "蜂蜜與酸種麵包", loc: "Pure Peninsula Honey", desc: "買蜂蜜 (推薦 Yellow Box)。再開 15 分鐘去 Miller's Bread Kitchen 買麵包。" },
                 { time: "14:30", title: "Arthurs Seat Lookout", loc: "Arthurs Seat Lookout", desc: "沉浸在尤加利森林中俯瞰港灣。" },
-                { time: "16:00", title: "半島溫泉 (Bath House)", loc: "Peninsula Hot Springs", desc: "預約制，下雨泡湯臉冰身體熱很享受。泡完後去 Rosebud 住宿。" },
-                { time: "18:00", title: "斯參克角燈塔 (看風景)", loc: "Cape Schanck Lighthouse (停車場)", desc: "看壯麗燈塔地形。注意：避開 400 階長階梯，只走看台。" }
+                { time: "15:30", title: "住宿 Check-in", loc: "Bayview Motel Rosebud-Rye", desc: "先放行李。" },
+                { time: "16:00", title: "斯參克角燈塔", loc: "Cape Schanck Coastal Walking - Car parking", desc: "看壯麗燈塔地形。注意：避開 400 階長階梯，只走看台。" },
+                { time: "18:00", title: "晚餐覓食", loc: "Woolworths Rye", desc: "在 Woolworths 附近覓食。" }
             ]},
             { day: 6, date: "10/23 (五)", label: "渡輪與格蘭屏移動 (G1)", items: [
                 { time: "10:00", title: "跨海渡輪 (Sorrento)", loc: "Searoad Ferries - Sorrento", desc: "人車同船跨海。需提早 40 分鐘報到。航程約 40 分鐘。" },
@@ -118,25 +119,28 @@
             ]},
             { day: 7, date: "10/24 (六)", label: "格蘭屏：懸崖與袋鼠 (G2)", items: [
                 { time: "09:30", title: "Boroka Lookout 絕景", loc: "Boroka Lookout", desc: "格蘭屏明信片景點。停車即達，俯瞰山谷。" },
-                { time: "11:00", title: "惡魔之口 (鱷魚嘴)", loc: "Reed Lookout (停車場)", desc: "輕鬆步道看惡魔之口岩石，往返約 1 小時。" },
-                { time: "13:30", title: "Halls Gap 覓食", loc: "Halls Gap Bakery", desc: "推薦知名肉派。逛在地雜貨店與原住民文化中心。" },
-                { time: "16:30", title: "袋鼠大軍 (湖畔)", loc: "Lake Bellfield lookout", desc: "極推！背景壯麗，袋鼠多且自然，無觀光味。" }
+                { time: "11:00", title: "惡魔之口 (鱷魚嘴)", loc: "Reed Lookout", desc: "車停 Reed Lookout 停車場，走步道至惡魔之口 (The Balconies)。" },
+                { time: "13:00", title: "原住民文化中心", loc: "Brambuk the National Park & Cultural Centre", desc: "購買特色尤加利木刻或原住民藝術品。" },
+                { time: "15:00", title: "Venus Baths", loc: "Halls Gap Botanical Gardens", desc: "車停植物園停車場，往返約一小時。" },
+                { time: "16:30", title: "袋鼠大軍 (湖畔)", loc: "Lake Bellfield lookout and toilets", desc: "極推！背景壯麗，袋鼠在堤防斜坡吃草，無觀光味。" }
             ]},
             { day: 8, date: "10/25 (日)", label: "格蘭屏：巔峰挑戰 (G3)", items: [
-                { time: "09:30", title: "The Pinnacle 巔峰看台", loc: "Sundial Carpark", desc: "天晴必去！俯瞰 Halls Gap 全景。岩石地形，小心行走。" },
-                { time: "14:30", title: "麥肯錫瀑布", loc: "MacKenzie Falls Car Park", desc: "維州最大瀑布。水量大，階梯濕滑請小心走。" },
-                { time: "16:30", title: "鎮上球場袋鼠", loc: "Halls Gap Recreation Reserve", desc: "遊客集散地。想看超多袋鼠來這球場準沒錯。" }
+                { time: "09:30", title: "The Pinnacle 巔峰看台", loc: "Sundial Carpark", desc: "天晴必去！俯瞰 Halls Gap 全景。岩石地形，小心行走 (往返2小時)。" },
+                { time: "14:30", title: "麥肯錫瀑布", loc: "MacKenzie Falls Car Park", desc: "維州最大瀑布。水量大，階梯濕滑請小心走 (往返1.5小時)。" },
+                { time: "16:30", title: "鎮上球場袋鼠", loc: "Halls Gap Recreation Reserve", desc: "遊客集散地，袋鼠多到像喪屍圍城。" }
             ]},
             { day: 9, date: "10/26 (一)", label: "維多利亞時代漫步", items: [
                 { time: "11:00", title: "Wendouree 最後購物", loc: "Stockland Wendouree", desc: "大型商場最後購物，補齊要帶回台灣的禮物。" },
-                { time: "14:00", title: "Lydiard St 歷史建築街", loc: "Lydiard St (Historic Post Box)", desc: "澳洲保存最完整建築街。純散步拍照，感受歷史感。" },
-                { time: "15:00", title: "植物園與湖畔散步", loc: "Pipers by the Lake (停車處)", desc: "Lake Wendouree 湖畔散步，風景如畫。" },
-                { time: "16:00", title: "住宿：Bakery Hill Motel", loc: "Bakery Hill Motel", desc: "房內有微波爐。回程前整理行李。" }
+                { time: "14:00", title: "歷史建築街散步", loc: "Historic Post Box", desc: "導航至古老郵筒。Lydiard St 是保存最完整的建築街，純散步拍照。" },
+                { time: "15:00", title: "植物園與湖畔", loc: "Pipers by the Lake", desc: "車停湖畔餐廳附近，Lake Wendouree 散步。" },
+                { time: "16:00", title: "疏芬山 (門口拍照)", loc: "Sovereign Hill", desc: "雖然沒進去，但門口也很漂亮，拍個照留念。" },
+                { time: "17:00", title: "住宿 Check-in", loc: "Bakery Hill Motel", desc: "房內有微波爐，整理行李。" }
             ]},
             { day: 10, date: "10/27 (二)", label: "最後留念與回程", items: [
-                { time: "10:00", title: "與袋熊最後相會", loc: "Ballarat Wildlife Park", desc: "別忘了詢問 Wombat encounter！這裡是看袋熊最後機會。" },
-                { time: "15:00", title: "DFO 最後血拼", loc: "DFO Essendon", desc: "機場旁 Outlet。把握最後免稅店與伴手禮採買。" },
-                { time: "19:00", title: "還車手續", loc: "Andrew's Airport Parking (還車點)", desc: "在機場 BP 加油後還車。搭接駁車去機場，23:20 起飛。" }
+                { time: "10:00", title: "Ballarat Wildlife Park", loc: "Ballarat Wildlife Park", desc: "記得詢問 Wombat encounter！這裡是看袋熊最後機會。" },
+                { time: "14:00", title: "最後血拼", loc: "DFO Essendon", desc: "機場旁 Outlet 或 Westfield Airport West。最後伴手禮採買。" },
+                { time: "18:00", title: "加油 (Refuel)", loc: "Melbourne Airport BP", desc: "加滿油準備還車。" },
+                { time: "19:00", title: "還車手續", loc: "Andrew's Airport Parking", desc: "辦理 Apex 還車。搭 20:00 接駁車至機場，23:20 起飛。" }
             ]}
         ];
 
@@ -176,7 +180,7 @@
                             <span class="truncate max-w-[120px] uppercase">${item.loc}</span>
                         </div>
                         <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.loc)}" target="_blank" class="bg-slate-900 text-white px-6 py-3 rounded-2xl text-[10px] font-black shadow-xl active:scale-95 transition-all">
-                            導航停車場
+                            導航地點
                         </a>
                     </div>
                 </div>
@@ -198,9 +202,11 @@
             
             const modal = document.createElement('div');
             modal.className = "fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-8 backdrop-blur-md fade-in";
+            // 移除首行多餘的空白
+            const content = info[1].replace(/^\s+/, '');
             modal.innerHTML = `<div class="bg-white rounded-[3rem] w-full max-w-sm p-10 shadow-2xl relative">
                 <h3 class="text-2xl font-black mb-6 text-slate-800 leading-tight">${info[0]}</h3>
-                <div class="text-slate-500 text-sm whitespace-pre-wrap leading-relaxed mb-8 font-medium overflow-y-auto max-h-[50vh]">${info[1]}</div>
+                <div class="text-slate-500 text-sm whitespace-pre-wrap leading-relaxed mb-8 font-medium overflow-y-auto max-h-[50vh]">${content}</div>
                 <button onclick="this.parentElement.parentElement.remove()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-emerald-100">關閉</button>
             </div>`;
             document.body.appendChild(modal);
