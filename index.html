@@ -1,25 +1,585 @@
-<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- 背景：柔和的大地棕色，圓角矩形 (iOS 風格) -->
-    <rect width="192" height="192" rx="40" fill="#8D6E63"/>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2026 澳洲維多利亞：袋熊與山林慢遊</title>
     
-    <!-- 耳朵 -->
-    <circle cx="56" cy="64" r="18" fill="#5D4037"/>
-    <circle cx="136" cy="64" r="18" fill="#5D4037"/>
-    
-    <!-- 臉型：圓潤的米色 -->
-    <ellipse cx="96" cy="100" rx="70" ry="60" fill="#D7CCC8"/>
-    
-    <!-- 標誌性的裸鼻：深色倒三角/心形 -->
-    <path d="M76 100C76 92 84 88 96 88C108 88 116 92 116 100C116 112 96 122 96 122C96 122 76 112 76 100Z" fill="#3E2723"/>
-    
-    <!-- 眼睛：分開一點比較可愛 -->
-    <circle cx="68" cy="85" r="6" fill="#1A120B"/>
-    <circle cx="124" cy="85" r="6" fill="#1A120B"/>
-    
-    <!-- 腮紅 -->
-    <circle cx="58" cy="105" r="8" fill="#FFAB91" fill-opacity="0.6"/>
-    <circle cx="134" cy="105" r="8" fill="#FFAB91" fill-opacity="0.6"/>
-    
-    <!-- 嘴巴 -->
-    <path d="M88 128C88 128 92 132 96 132C100 132 104 128 104 128" stroke="#3E2723" stroke-width="3" stroke-linecap="round"/>
-</svg>
+    <!-- iOS 主畫面 Icon 設定 (請確保 apple-touch-icon.png 已上傳至同目錄) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="2026澳洲慢遊">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', -apple-system, sans-serif;
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none;
+        }
+        .tab-active {
+            background-color: #059669;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card-shadow { box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05); }
+        
+        /* 側邊詳情欄動畫 */
+        .drawer-overlay { transition: opacity 0.3s ease-in-out; }
+        .drawer-content { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
+        
+        /* 全螢幕視窗動畫 */
+        .modal-enter { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        /* 駕駛時間連接線 */
+        .drive-line {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: -8px 0;
+            z-index: 0;
+        }
+        .drive-dashed {
+            height: 32px;
+            border-left: 2px dashed #cbd5e1;
+        }
+        .drive-badge {
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 10;
+        }
+        .drive-badge:active {
+            transform: scale(0.95);
+            background: #059669;
+            color: white;
+            border-color: #059669;
+        }
+    </style>
+</head>
+<body class="max-w-md mx-auto min-h-screen pb-32 relative bg-slate-50 overflow-x-hidden">
+
+    <!-- 頂部區塊 -->
+    <header class="glass-header sticky top-0 z-40 border-b border-emerald-100">
+        <div class="px-6 py-4">
+            <div class="flex justify-between items-center mb-3">
+                <div>
+                    <h1 class="text-xl font-black text-slate-800 tracking-tight">2026 澳洲慢遊</h1>
+                    <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Wombat & Kangaroo Expedition</p>
+                </div>
+                <div class="bg-emerald-600 text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg shadow-emerald-100">
+                    10 DAYS
+                </div>
+            </div>
+            <div id="tabs" class="flex overflow-x-auto hide-scrollbar space-x-2 py-1">
+                <!-- Tabs 由 JS 生成 -->
+            </div>
+        </div>
+    </header>
+
+    <!-- 行程內容 -->
+    <main id="content" class="px-5 pt-6 relative z-0">
+        <!-- 內容 由 JS 生成 -->
+    </main>
+
+    <!-- 右側抽屜 (簡易預覽) -->
+    <div id="detail-drawer" class="fixed inset-0 z-[100] hidden">
+        <div class="drawer-overlay absolute inset-0 bg-black/40 backdrop-blur-[2px]" onclick="closeDrawer()"></div>
+        <div class="drawer-content absolute right-0 top-0 bottom-0 w-[90%] max-w-sm bg-white transform translate-x-full flex flex-col rounded-l-[2.5rem]">
+            
+            <!-- 抽屜頂部 -->
+            <div class="p-8 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-tl-[2.5rem] relative overflow-hidden">
+                <div class="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+                <button onclick="closeDrawer()" class="absolute top-6 right-6 text-white/90 hover:text-white p-2 transition-transform active:scale-90">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+                <div class="mt-4">
+                    <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold mb-3 backdrop-blur-sm">INFO</span>
+                    <div id="drawer-header" class="pr-6"></div>
+                </div>
+            </div>
+
+            <!-- 抽屜內容 -->
+            <div id="drawer-body" class="p-8 overflow-y-auto flex-1 text-sm leading-relaxed text-slate-600 whitespace-pre-wrap"></div>
+            
+            <!-- 底部按鈕區 -->
+            <div class="p-6 border-t border-slate-100 bg-slate-50/50 rounded-bl-[2.5rem] space-y-3">
+                <button id="btn-full-screen" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-emerald-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-book-open"></i> 查看完整攻略
+                </button>
+                <button onclick="closeDrawer()" class="w-full py-3 bg-white border border-slate-200 text-slate-500 rounded-2xl font-bold text-xs hover:bg-slate-50 transition">
+                    關閉
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全螢幕詳細資訊視窗 -->
+    <div id="full-screen-modal" class="fixed inset-0 z-[110] bg-white hidden flex-col">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white/90 backdrop-blur sticky top-0 z-10">
+            <h3 class="text-lg font-bold text-slate-800">詳細攻略</h3>
+            <button onclick="closeFullScreen()" class="w-8 h-8 flex items-center justify-center bg-slate-100 rounded-full text-slate-500 hover:bg-slate-200">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div id="full-screen-content" class="flex-1 overflow-y-auto p-6 pb-24 text-slate-700 leading-loose">
+            <!-- 內容由 JS 填充 -->
+        </div>
+    </div>
+
+    <!-- 底部功能列 -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-[360px] glass-header border border-white/50 rounded-3xl px-2 py-3 flex justify-around items-center shadow-2xl z-50">
+        <button onclick="switchDay(currentDay)" class="flex flex-col items-center text-emerald-600 px-3">
+            <i class="fa-solid fa-map-location-dot text-xl mb-1"></i>
+            <span class="text-[9px] font-bold">每日行程</span>
+        </button>
+        <button onclick="showInfo('strategy')" class="flex flex-col items-center text-slate-400 px-3">
+            <i class="fa-solid fa-cloud-sun text-xl mb-1"></i>
+            <span class="text-[9px] font-bold">天氣策略</span>
+        </button>
+        <button onclick="showInfo('fruits')" class="flex flex-col items-center text-slate-400 px-3">
+            <i class="fa-solid fa-lemon text-xl mb-1"></i>
+            <span class="text-[9px] font-bold">水果推薦</span>
+        </button>
+        <button onclick="showInfo('shopping')" class="flex flex-col items-center text-slate-400 px-3">
+            <i class="fa-solid fa-basket-shopping text-xl mb-1"></i>
+            <span class="text-[9px] font-bold">必買清單</span>
+        </button>
+    </nav>
+
+    <script>
+        const itineraryData = [
+            { 
+                day: 1, 
+                date: "10/18 (日)", 
+                label: "抵達與啟程", 
+                items: [
+                    { 
+                        time: "11:40", 
+                        title: "抵達機場與取車", 
+                        loc: "PARKROYAL Melbourne Airport (接駁車處)", 
+                        desc: "抵達 MEL。步行至 PARKROYAL 搭乘 APEX 接駁車。",
+                        detail: "📝 簡易資訊：\n車型：Intermediate SUV (MG HS / RAV4)\n保險：全險 (Zero Excess)\n方式：接駁車",
+                        fullContent: `
+<h4 class="text-xl font-bold text-emerald-700 mb-4">🚗 取車完整攻略</h4>
+<div class="mb-6">
+    <strong class="text-slate-900 block mb-2">1. 步行路線 (關鍵!)</strong>
+    <p>抵達墨爾本機場 (T2) 後，請推著行李依照指示前往 <span class="bg-yellow-100 px-1 rounded font-bold">PARKROYAL Hotel</span>。通常是在航廈對面，過馬路就到。請在飯店門口的 <strong>Zone 4 或 Zone 5</strong> 等待印有 "Apex" 字樣的接駁車。</p>
+</div>
+<div class="mb-6">
+    <strong class="text-slate-900 block mb-2">2. 取車手續</strong>
+    <ul class="list-disc pl-5 space-y-1">
+        <li>出示文件：護照、台灣駕照、國際駕照、信用卡。</li>
+        <li>保險確認：您已投保 <strong>Zero Excess (全險)</strong>，櫃台若推銷額外保險可禮貌拒絕。</li>
+        <li>檢查車輛：雖然是全險，習慣上還是繞車一圈錄影存證。</li>
+    </ul>
+</div>
+<div class="mb-6">
+    <strong class="text-slate-900 block mb-2">3. 過路費 (Tolls)</strong>
+    <p>Apex 車輛皆已安裝電子標籤 (Tag)。行經收費路段 (如 CityLink) 會自動記錄，費用將直接從信用卡扣款，<strong>不需要</strong>自行購買 Linkt Pass。</p>
+</div>`
+                    },
+                    { 
+                        driveTime: "🚗 10 分鐘 (陷阱)",
+                        time: "14:00", 
+                        title: "取車出發 (CityLink 注意)", 
+                        loc: "Apex Car Rentals Melbourne Airport", 
+                        desc: "上 M2 橋時開「左二」或「左三」車道。隧道內 GPS 易失靈，往 SE Suburbs 方向。",
+                        detail: "⚠️ 駕駛重點：\nM2 橋上靠左二/左三車道。\n隧道內無訊號，出隧道往 SE Suburbs。",
+                        fullContent: `
+<h4 class="text-xl font-bold text-emerald-700 mb-4">⚠️ 墨爾本自駕地獄路段解析</h4>
+<div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+    <strong class="text-red-700">絕對禁止：</strong>
+    <p>上 Bolte Bridge (跨越雅拉河的大橋) 時，<strong class="text-red-600">千萬不要走最左邊的車道</strong>！那條車道會強制你下交流道進入繁忙的墨爾本市區。</p>
+</div>
+<div class="mb-6">
+    <strong class="text-slate-900 block mb-2">1. 正確車道</strong>
+    <p>請保持在 <strong>【左邊數來第二】</strong> 或 <strong>【左邊數來第三】</strong> 條車道。</p>
+</div>
+<div class="mb-6">
+    <strong class="text-slate-900 block mb-2">2. 隧道迷航應對</strong>
+    <p>通過大橋後會進入長隧道 (Burnley Tunnel)。</p>
+    <ul class="list-disc pl-5 space-y-1">
+        <li>狀況：隧道內 GPS 100% 會失去訊號。</li>
+        <li>應對：保持鎮定，直行。</li>
+        <li>關鍵時刻：一出隧道，GPS 尚未恢復時，請依照路牌指示往 <strong>【SE Suburbs】</strong> 或 <strong>【Monash Fwy】</strong> 方向靠右行駛。</li>
+    </ul>
+</div>`
+                    },
+                    { 
+                        driveTime: "🚗 2 小時 (高速)",
+                        time: "16:00", 
+                        title: "Woolworths 採買", 
+                        loc: "Woolworths Leongatha", 
+                        desc: "買齊未來4天食材。必看：保冷袋、晚餐食材。",
+                        detail: "🛒 採買重點：\n早餐：麵包、牛奶\n晚餐：三天份肉菜\n裝備：保冷袋",
+                        fullContent: `
+<h4 class="text-xl font-bold text-emerald-700 mb-4">🛒 Leongatha 物資補給站</h4>
+<p class="mb-4">這是進入國家公園前物價最正常的超市，請在此買足未來 3-4 天的糧食。</p>
+<div class="mb-6">
+    <strong class="text-slate-900 block mb-2">🥩 晚餐與生存物資</strong>
+    <ul class="list-disc pl-5 space-y-2">
+        <li><strong>肉類</strong>：牛排 (澳洲牛便宜好吃)、羊排。</li>
+        <li><strong>蔬菜</strong>：沙拉葉、蘑菇、節瓜 (好煮)。</li>
+        <li><strong>保冷袋 (Cooler Bag)</strong>：必買！超市有賣那種綠色的環保保冷袋，用來在車上保存肉類與牛奶。</li>
+        <li><strong>飲用水</strong>：建議買兩大桶 5L 水備用。</li>
+    </ul>
+</div>`
+                    },
+                    { 
+                        driveTime: "🚗 15 分鐘",
+                        time: "17:00", 
+                        title: "住宿：Meeniyan Motel", 
+                        loc: "Meeniyan Motel", 
+                        desc: "適應時差。房內有微波爐與按摩浴缸，早點休息。",
+                        detail: "🏨 住宿資訊：\n設施：微波爐、按摩浴缸\n任務：分裝食材、調時差",
+                        fullContent: `
+<h4 class="text-xl font-bold text-emerald-700 mb-4">🏨 Meeniyan Motel 入住指南</h4>
+<p class="mb-4">第一天旅途勞頓，這間 Motel 是很好的休息點。</p>
+<ul class="list-disc pl-5 space-y-2">
+    <li><strong>設施利用</strong>：房內配有微波爐，可簡單加熱晚餐。最棒的是有按摩浴缸 (Spa Bath)，請務必泡澡消除長途飛行的疲勞。</li>
+    <li><strong>食材整理</strong>：利用這裡的冰箱，將剛買的大包裝肉類分裝成「每餐份量」，方便之後露營區使用。</li>
+    <li><strong>早點休息</strong>：澳洲與台灣時差 +3 小時，建議今晚早點睡，明天一早精神飽滿出發看瀑布。</li>
+</ul>`
+                    }
+                ]
+            },
+            { 
+                day: 2, 
+                date: "10/19 (一)", 
+                label: "前進袋熊國度 (W1)", 
+                items: [
+                    { time: "09:30", title: "Agnes Falls 瀑布", loc: "Agnes Falls", desc: "觀賞壯觀瀑布。車程約 40 分鐘。", driveTime: "🚗 40 分鐘", detail: "🌊 景點：維州最高單跨瀑布\n步行：停車場走 5 分鐘即達", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🌊 Agnes Falls</h4><p>維多利亞州最高的單跨瀑布。步道平緩好走，來回僅需 10-15 分鐘。</p>" },
+                    { time: "11:00", title: "Foster IGA 最後補給", loc: "Foster IGA + Liquor", desc: "進公園前最後大型超市！務必買齊未來4天食材與飲水。", driveTime: "🚗 20 分鐘", detail: "⚠️ 警告：最後補給點\n檢查清單：油鹽、衛生紙、肉菜、飲用水", fullContent: "<h4 class='text-xl font-bold text-red-600 mb-4'>⚠️ 最後補給警告</h4><p>過了 Foster 就沒有大型超市了。請務必檢查是否買齊了油、鹽、衛生紙及所有食材。</p>" },
+                    { time: "14:00", title: "Check-in 小木屋", loc: "Tidal River Cabins", desc: "熟悉園區。若天氣大好，直接前往 Squeaky Beach Car Park。", driveTime: "🚗 50 分鐘 (入園)", detail: "🏡 住宿攻略：\n1. 遊客中心拿鑰匙\n2. 廚房設備檢查\n3. 車停木屋旁", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🏡 Tidal River Cabins</h4><p>先去 Visitors Centre 領鑰匙。車子可停在小木屋旁。檢查廚房設備 (通常有微波爐、烤麵包機)。</p>" },
+                    { time: "17:30", title: "黃金時刻 (袋熊時間)", loc: "Tidal River Cabins (營區附近)", desc: "營區散步尋找野生袋熊，牠們通常在黃昏像里長伯一樣巡邏。", detail: "🐨 S 級任務：尋找袋熊\n時間：17:00 - 19:00\n地點：露營區草地", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🐨 尋找 Wombat 指南</h4><p>黃昏時分 (17:00-19:00) 是袋熊活動高峰。就在營區草地上，保持安靜，不要觸摸。</p>" },
+                    { time: "19:00", title: "返回小木屋", loc: "Tidal River Cabins", desc: "回到小木屋休息，準備晚餐。", detail: "🏡 休息：\n回到溫暖的小木屋，利用廚房煮晚餐。", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🏡 返回基地</h4><p>天黑後建議回到小木屋休息。利用剛買的食材煮一頓豐盛晚餐。</p>" }
+                ]
+            },
+            { day: 3, date: "10/20 (二)", label: "威爾遜岬：山海絕景 (W2)", items: [
+                { time: "09:00", title: "Mt Oberon 海景健行", loc: "Telegraph Saddle Car Park", desc: "整趟旅程最震撼海景。原路折返 2 小時。晴天一定要去！", detail: "☀️ 晴天必衝 (等級 S)：\n往返：2 小時\n難度：持續上坡\n景觀：360度海景", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>⛰️ Mt Oberon</h4><p>晴天必去！雖然一路緩上坡有點累，但山頂的 360 度海景絕對值得。</p>" },
+                { time: "13:30", title: "Squeaky Beach", loc: "Squeaky Beach Car Park", desc: "石英砂「啾啾」聲沙灘。可在海岸線步道散步，風景優美。", driveTime: "🚗 15 分鐘", detail: "🏖️ 必玩：\n特色：會叫的沙子\n拍照：紅岩石+藍海水", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🏖️ Squeaky Beach</h4><p>這裡的石英砂非常純淨，踩上去會發出啾啾聲。紅色的岩石搭配藍色海水非常美。</p>" },
+                { time: "16:00", title: "Whisky Bay 巨石", loc: "wilsons prom Whisky Bay", desc: "觀賞壯觀巨石與浪花。今天記得洗衣服 (累積 3 天份)。", driveTime: "🚗 10 分鐘", detail: "🧺 提醒：\n景點：巨石夕陽\n任務：回營區洗衣服", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🪨 Whisky Bay</h4><p>巨大的圓滑岩石散落在沙灘上。回營區後記得利用投幣洗衣機洗衣服。</p>" },
+                { time: "18:00", title: "返回小木屋", loc: "Tidal River Cabins", desc: "回到小木屋，洗衣煮飯。", detail: "🏡 歸巢：\n結束行程，回小木屋休息。", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🏡 返回基地</h4><p>結束行程，回到小木屋休息。</p>" }
+            ]},
+            { day: 4, date: "10/21 (三)", label: "威爾遜岬：森林與動物 (W3)", items: [
+                { time: "09:30", title: "Lilly Pilly Gully 雨林步道", loc: "Lilly Pilly Gully Carpark", desc: "平緩雨林步道，適合陰天或避暑。一圈約 3 小時。", driveTime: "🚗 10 分鐘", detail: "🌲 步道：\n特色：溫帶雨林\n時間：3 小時環狀", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🌲 Lilly Pilly Gully</h4><p>這是一條溫帶雨林步道，平緩好走，適合陰天或想避開海風時來走。</p>" },
+                { time: "14:00", title: "Pillar Point 看台", loc: "Tidal River Cabins (步行起點)", desc: "從住處出發，來回約 2 小時，觀看壯闊海岸線。", driveTime: "🚗 回營區", detail: "🚶‍♂️ 步行：\n起點：Tidal River 橋\n景觀：Norman Beach 全景", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>👀 Pillar Point</h4><p>從營區步行即可到達，視野開闊，可以同時看到 Norman Beach 和 Squeaky Beach。</p>" },
+                { time: "17:00", title: "Prom Wildlife Walk", loc: "Prom Wildlife Walk (草原)", desc: "開闊草原區，保證能看到鴯鶓 (Emu) 和袋鼠。", driveTime: "🚗 5 分鐘", detail: "🦘 動物大賞：\n必看：鴯鶓、袋鼠\n地點：舊機場跑道", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🦘 Prom Wildlife Walk</h4><p>這裡以前是飛機跑道，現在是鴯鶓和袋鼠的聚集地，傍晚時分動物非常多。</p>" },
+                { time: "18:30", title: "返回小木屋", loc: "Tidal River Cabins", desc: "最後一晚在 Wilsons Prom，整理行李。", detail: "🏡 整理：\n明天要移動了，今晚請整理好行李。", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🏡 最後一晚</h4><p>明天要離開國家公園了，請清空冰箱並整理行李。</p>" }
+            ]},
+            { day: 5, date: "10/22 (四)", label: "溫泉放鬆日", items: [
+                { time: "12:00", title: "Pure Peninsula Honey", loc: "Pure Peninsula Honey", desc: "買蜂蜜(推薦 Yellow Box)。", driveTime: "🚗 2.5 小時 (長途)", detail: "🍯 買蜂蜜：\n推薦：Yellow Box, Grey Box", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🍯 Pure Peninsula Honey</h4><p>推薦購買 Yellow Box 蜂蜜，口感滑順不結晶。</p>" },
+                { time: "13:00", title: "Miller's Bread Kitchen", loc: "Millers Bread Kitchen Dromana", desc: "買好吃的麵包 + 吃午餐。隔壁有 Aldi 可補貨。", driveTime: "🚗 15 分鐘", detail: "🥪 午餐：\n必買：酸種麵包\n補貨：隔壁 Aldi 超市", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🥪 Miller's Bread Kitchen</h4><p>推薦買 Sourdough 酸種麵包當明天早餐。隔壁有 Aldi 可以補貨。</p>" },
+                { time: "15:00", title: "Arthurs Seat Lookout", loc: "Arthurs Seat Lookout", desc: "沉浸在尤加利森林中俯瞰港灣。", driveTime: "🚗 15 分鐘", detail: "📸 觀景：\n視野：菲利普港灣全景", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>📸 Arthurs Seat</h4><p>摩寧頓半島的制高點，俯瞰海灣美景。</p>" },
+                { time: "16:00", title: "Check-in 住宿", loc: "Bayview Motel Rosebud-Rye", desc: "先 Check-in 放行李。", driveTime: "🚗 15 分鐘", detail: "🏨 住宿：\nBayview Motel Rosebud-Rye", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🏨 Bayview Motel</h4><p>辦理入住，放下行李。</p>" },
+                { time: "16:30", title: "斯參克角燈塔步道", loc: "Cape Schanck Lighthouse Car Park", desc: "看壯麗燈塔地形。注意：避開 400 階長階梯，只走看台。", driveTime: "🚗 20 分鐘", detail: "⚠️ 攻略：\n重點：只走平路看台\n避雷：不要走 Pulpit Rock 階梯", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>💡 Cape Schanck</h4><p>只走平路到燈塔和觀景台就好，不要走那個幾百階的木棧道下去，回程會很累。</p>" },
+                { time: "18:30", title: "晚餐覓食 & 回飯店", loc: "Woolworths Rye", desc: "在 Woolworths Rye 附近覓食，餐後回飯店。", driveTime: "🚗 15 分鐘", detail: "🍽️ 晚餐：\nWoolworths 熟食或附近餐廳", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🍽️ 晚餐</h4><p>在 Rye 鎮上解決晚餐，或去超市買熟食。</p>" }
+            ]},
+            { day: 6, date: "10/23 (五)", label: "渡輪與格蘭屏移動 (G1)", items: [
+                { time: "10:00", title: "跨海渡輪 (Sorrento)", loc: "Searoad Ferries - Sorrento", desc: "人車同船跨海。需提早 40 分鐘報到。航程約 40 分鐘。", driveTime: "🚗 15 分鐘", detail: "🚢 渡輪：\n路線：Sorrento -> Queenscliff\n注意：提早 40 分鐘報到", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🚢 跨海渡輪</h4><p>請務必提早 40 分鐘報到。人車同船，可以上甲板看風景。</p>" },
+                { time: "13:00", title: "Ballarat 補給與午餐", loc: "Stockland Wendouree", desc: "中途大型購物中心，休息與用餐。", driveTime: "🚗 2 小時 (移動)", detail: "🍔 中繼站：\n設施：美食街、廁所、超市", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🍔 Stockland Wendouree</h4><p>前往格蘭屏途中的大休息站，適合用餐和補給。</p>" },
+                { time: "15:00", title: "Ararat 最後食材補給", loc: "Woolworths Ararat", desc: "進入格蘭屏前的最後大補給。買齊 3 天食材。", driveTime: "🚗 1 小時", detail: "🛒 補貨：\n重點：買齊 3 天份早餐晚餐食材", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🛒 Woolworths Ararat</h4><p>進入山區前的最後大超市。請買齊未來 3 天的早晚餐食材。</p>" },
+                { time: "17:00", title: "Check-in Halls Gap", loc: "NRMA Halls Gap Holiday Park", desc: "傍晚袋鼠會直接跳到營地小木屋旁吃草。", driveTime: "🚗 40 分鐘", detail: "🦘 住宿：\n特色：袋鼠就在門口", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🦘 NRMA Halls Gap</h4><p>傍晚時分，野生袋鼠會直接跳進露營區吃草，非常療癒。</p>" },
+                { time: "18:00", title: "小木屋晚餐", loc: "NRMA Halls Gap Holiday Park", desc: "在小木屋煮晚餐，享受袋鼠環繞的夜晚。", detail: "🏡 晚餐：\n享受與袋鼠共進晚餐的時光。", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🏡 袋鼠之夜</h4><p>在小木屋煮晚餐，享受被動物包圍的夜晚。</p>" }
+            ]},
+            { day: 7, date: "10/24 (六)", label: "格蘭屏：懸崖與袋鼠 (G2)", items: [
+                { time: "09:30", title: "Boroka Lookout 絕景", loc: "Boroka Lookout", desc: "格蘭屏明信片景點。停車即達，俯瞰山谷。", driveTime: "🚗 25 分鐘", detail: "📸 必拍 (等級 S)：\n特色：懸崖視角、不用爬山", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>📸 Boroka Lookout</h4><p>CP值最高的景點，停車走兩步就是絕景懸崖。</p>" },
+                { time: "11:00", title: "惡魔之口 (鱷魚嘴)", loc: "Reed Lookout (停車場)", desc: "輕鬆步道看惡魔之口岩石，往返約 1 小時。", driveTime: "🚗 15 分鐘", detail: "🐊 步道：\n路線：Reed Lookout -> The Balconies", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🐊 The Balconies</h4><p>從 Reed Lookout 走平緩步道即可到達，岩石形狀像鱷魚嘴巴。</p>" },
+                { time: "13:00", title: "Halls Gap Bakery (午餐)", loc: "Halls Gap Licensed General Store", desc: "知名肉派店午餐。車停雜貨店旁方便購物。", driveTime: "🚗 20 分鐘", detail: "🥧 午餐：\n必吃：肉派 (Meat Pie)、香草切片 (Vanilla Slice)", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🥧 Halls Gap Bakery</h4><p>鎮上必吃肉派。建議車停旁邊的 General Store 比較好停。</p>" },
+                { time: "14:00", title: "原住民文化中心", loc: "Brambuk the National Park & Cultural Centre", desc: "購買特色尤加利木刻或原住民藝術品。", driveTime: "🚗 3 分鐘", detail: "🎨 文化：\n購物：尤加利木刻、迴力鏢", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🎨 Brambuk Cultural Centre</h4><p>建築很有特色，可以買到精緻的原住民木刻藝品。</p>" },
+                { time: "14:45", title: "Grampians Furniture", loc: "Grampians Furniture", desc: "參觀專業的 Red Gum (赤桉) 家具店。", driveTime: "🚗 2 分鐘", detail: "🪑 逛街：\n特色：紅桉木家具", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🪑 Grampians Furniture</h4><p>欣賞在地特有的紅桉木家具工藝。</p>" },
+                { time: "15:30", title: "Venus Baths", loc: "Halls Gap Botanical Gardens", desc: "車停植物園停車場，往返約一小時的輕鬆步道。", driveTime: "🚗 5 分鐘", detail: "💦 步道：\n特色：天然水池、踩水", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>💦 Venus Baths</h4><p>沿著小溪走的輕鬆步道，有天然的小水池。</p>" },
+                { time: "17:00", title: "袋鼠大軍 (湖畔)", loc: "Lake Bellfield lookout", desc: "極推！背景壯麗，袋鼠多且自然，無觀光味。", driveTime: "🚗 5 分鐘", detail: "🦘 攝影 (等級 S)：\n特色：山湖背景、無遊客", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🦘 Lake Bellfield</h4><p>這裡袋鼠很多且遊客少，背景是湖泊山脈，拍照極美。</p>" },
+                { time: "18:00", title: "返回小木屋", loc: "NRMA Halls Gap Holiday Park", desc: "回營地休息。", detail: "🏡 休息：\n結束充實的一天。", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🏡 返回基地</h4><p>回到營區休息。</p>" }
+            ]},
+            { day: 8, date: "10/25 (日)", label: "格蘭屏：巔峰挑戰 (G3)", items: [
+                { time: "09:30", title: "The Pinnacle 巔峰看台", loc: "Sundial Carpark", desc: "天晴必去！俯瞰 Halls Gap 全景。岩石地形，小心行走。", driveTime: "🚗 20 分鐘", detail: "⛰️ 健行 (等級 S)：\n起點：Sundial Carpark\n特色：站在懸崖尖端", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>⛰️ The Pinnacle</h4><p>建議從 Sundial Carpark 出發比較好走。山頂視野非常震撼。</p>" },
+                { time: "14:30", title: "麥肯錫瀑布", loc: "MacKenzie Falls Car Park", desc: "維州最大瀑布。水量大，階梯濕滑請小心走。", driveTime: "🚗 25 分鐘", detail: "🌊 瀑布：\n提醒：回程階梯陡峭", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🌊 MacKenzie Falls</h4><p>維州大瀑布。去程輕鬆，回程要爬陡峭樓梯，請量力而為。</p>" },
+                { time: "16:30", title: "鎮上球場袋鼠", loc: "Halls Gap Recreation Reserve", desc: "遊客集散地。想看超多袋鼠來這球場準沒錯。", driveTime: "🚗 30 分鐘", detail: "🦘 袋鼠：\n特色：數量極多、不怕人", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🦘 Halls Gap 球場</h4><p>這裡袋鼠超級多，而且不太怕人，適合近距離觀察。</p>" },
+                { time: "18:00", title: "返回小木屋", loc: "NRMA Halls Gap Holiday Park", desc: "最後一晚在格蘭屏，整理行李。", detail: "🏡 整理：\n明天要離開山區了，今晚請整理好行李。", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🏡 最後一晚</h4><p>明天要前往 Ballarat，請整理好行李。</p>" }
+            ]},
+            { day: 9, date: "10/26 (一)", label: "維多利亞時代漫步", items: [
+                { time: "11:00", title: "Wendouree 最後購物", loc: "Stockland Wendouree", desc: "大型商場最後購物，補齊要帶回台灣的禮物。", driveTime: "🚗 1.5 小時", detail: "🛍️ 購物：\n必買：茶包、保健品", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🛍️ Stockland Wendouree</h4><p>回國前最後的大採購機會，補齊 Twinings 茶包和保健品。</p>" },
+                { time: "14:00", title: "歷史建築街散步", loc: "Historic Post Box Ballarat", desc: "Lydiard St 是保存最完整建築街。純散步拍照。", driveTime: "🚗 10 分鐘", detail: "🏛️ 建築：\n特色：維多利亞風格、古老郵筒", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🏛️ Lydiard Street</h4><p>保存完整的維多利亞建築街區，很有電影場景感。</p>" },
+                { time: "15:00", title: "植物園與湖畔散步", loc: "Pipers by the Lake", desc: "車停湖畔餐廳附近，Lake Wendouree 散步。", driveTime: "🚗 5 分鐘", detail: "🦢 湖畔：\n看點：黑天鵝、百年船屋", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🦢 Lake Wendouree</h4><p>美麗的湖畔步道，可以看到黑天鵝和古老的船屋。</p>" },
+                { time: "16:00", title: "疏芬山 (門口拍照)", loc: "Sovereign Hill", desc: "雖然沒進去，但門口也很漂亮，拍個照留念。", driveTime: "🚗 10 分鐘", detail: "📸 打卡：\n特色：淘金鎮入口", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>📸 Sovereign Hill</h4><p>淘金鎮的大門口很有特色，值得停下來拍張照。</p>" },
+                { time: "17:00", title: "住宿 Check-in", loc: "Bakery Hill Motel", desc: "房內有微波爐。回程前整理行李。", driveTime: "🚗 5 分鐘", detail: "🧳 住宿：\nBakery Hill Motel\n任務：打包行李", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🏨 Bakery Hill Motel</h4><p>最後一晚，請務必把液體類物品打包進託運行李。</p>" }
+            ]},
+            { day: 10, date: "10/27 (二)", label: "最後留念與回程", items: [
+                { time: "10:00", title: "與袋熊最後相會", loc: "Ballarat Wildlife Park", desc: "別忘了詢問 Wombat encounter！這裡是看袋熊最後機會。", driveTime: "🚗 5 分鐘", detail: "🐨 動物園：\n必做：Wombat Encounter\n體驗：餵袋鼠", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🐨 Ballarat Wildlife Park</h4><p>可以近距離接觸袋熊 (Wombat Encounter)，也可以親手餵袋鼠。</p>" },
+                { time: "15:00", title: "DFO 最後血拼", loc: "DFO Essendon", desc: "機場旁 Outlet。把握最後免稅店與伴手禮採買。", driveTime: "🚗 1 小時 10 分", detail: "🛍️ Outlet：\n重點：運動品牌、澳洲服飾", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>🛍️ DFO Essendon</h4><p>機場附近的 Outlet，適合最後衝刺採買。</p>" },
+                { time: "18:00", title: "加油 (Refuel)", loc: "Melbourne Airport BP", desc: "加滿油準備還車。", driveTime: "🚗 10 分鐘", detail: "⛽ 加油：\n位置：機場 BP\n任務：加滿油、留收據", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>⛽ 還車前加油</h4><p>導航到 Melbourne Airport BP 把油加滿，並保留收據。</p>" },
+                { time: "19:00", title: "還車手續", loc: "Andrew's Airport Parking (還車點)", desc: "在機場 BP 加油後還車。搭接駁車去機場，23:20 起飛。", driveTime: "🚗 5 分鐘", detail: "✈️ 還車：\n地點：Andrew's Airport Parking\n接駁：前往 T2 航廈", fullContent: "<h4 class='text-xl font-bold text-emerald-700 mb-4'>✈️ Apex 還車</h4><p>在 Andrew's Airport Parking 還車，檢查物品後搭接駁車去 T2 航廈。</p>" }
+            ]}
+        ];
+
+        let currentDay = 1;
+
+        // 初始化 Tabs
+        function renderTabs() {
+            const tabs = document.getElementById('tabs');
+            tabs.innerHTML = itineraryData.map(d => `
+                <button onclick="switchDay(${d.day})" id="tab-day-${d.day}" class="whitespace-nowrap px-5 py-2.5 rounded-full text-[11px] font-bold transition-all duration-300 ${currentDay === d.day ? 'tab-active' : 'bg-white text-slate-400 border border-slate-100'}">
+                    DAY ${d.day}
+                </button>
+            `).join('');
+        }
+
+        function switchDay(day) {
+            currentDay = day;
+            renderTabs();
+            renderContent();
+            const activeTab = document.getElementById(`tab-day-${day}`);
+            activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 渲染內容
+        function renderContent() {
+            const content = document.getElementById('content');
+            const data = itineraryData.find(d => d.day === currentDay);
+            
+            // 標題
+            let html = `<div class="mb-6 fade-in px-1">
+                <p class="text-emerald-600 font-bold text-[10px] tracking-[0.2em] mb-1 flex items-center gap-2">
+                    <i class="fa-regular fa-calendar-check"></i> ${data.date}
+                </p>
+                <h2 class="text-2xl font-black text-slate-800">${data.label}</h2>
+            </div>`;
+            
+            // 卡片
+            html += data.items.map((item, i) => {
+                let driveHtml = '';
+                if (item.driveTime) {
+                    driveHtml = `
+                        <div class="drive-line fade-in" style="animation-delay: ${i*0.1}s">
+                            <div class="drive-dashed"></div>
+                            <div onclick="openNav('${item.loc}')" class="drive-badge shadow-sm hover:shadow-md">
+                                ${item.driveTime} <i class="fa-solid fa-arrow-down text-[8px] ml-1"></i>
+                            </div>
+                            <div class="drive-dashed"></div>
+                        </div>
+                    `;
+                }
+
+                return `
+                    ${driveHtml}
+                    <div class="relative bg-white rounded-3xl card-shadow p-6 mb-2 fade-in border border-slate-50 transition-transform active:scale-[0.98]" 
+                         style="animation-delay: ${i*0.1}s"
+                         onclick="openDetail(${currentDay}, ${i})">
+                        
+                        <!-- 右上角詳情按鈕 -->
+                        <button class="absolute top-5 right-5 text-slate-300 hover:text-emerald-500 transition-colors p-2">
+                            <i class="fa-solid fa-angle-right text-lg"></i>
+                        </button>
+
+                        <span class="inline-block bg-slate-100 text-slate-600 text-[10px] font-black px-3 py-1 rounded-full mb-3">
+                            ${item.time}
+                        </span>
+                        
+                        <h3 class="text-lg font-bold text-slate-800 mb-2 pr-8 leading-tight">${item.title}</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed mb-4 font-medium line-clamp-2">${item.desc}</p>
+                        
+                        <div class="flex items-center justify-between pt-4 border-t border-slate-50">
+                            <div class="flex items-center text-slate-400 text-[10px] font-bold tracking-wider mr-2">
+                                <i class="fa-solid fa-location-dot mr-1.5 text-emerald-400"></i>
+                                <span class="truncate max-w-[100px] uppercase">${item.loc.split('(')[0]}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <!-- 阻止冒泡，避免觸發卡片點擊 -->
+                                <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.loc)}" 
+                                   target="_blank" 
+                                   onclick="event.stopPropagation()"
+                                   class="bg-slate-800 text-white px-4 py-2 rounded-xl text-[10px] font-bold shadow-lg shadow-slate-200 active:scale-95 transition-all flex items-center gap-1.5">
+                                    <i class="fa-solid fa-diamond-turn-right"></i> 導航
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            html += `<div class="h-10"></div>`;
+            content.innerHTML = html;
+        }
+
+        // 開啟導航
+        function openNav(destination) {
+            const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
+            window.open(url, '_blank');
+        }
+
+        // 開啟抽屜 (Drawer)
+        let currentFullContent = ""; // 暫存完整內容
+        function openDetail(day, index) {
+            const data = itineraryData.find(d => d.day === day).items[index];
+            const drawer = document.getElementById('detail-drawer');
+            const header = document.getElementById('drawer-header');
+            const body = document.getElementById('drawer-body');
+            const content = drawer.querySelector('.drawer-content');
+            const btnFullScreen = document.getElementById('btn-full-screen');
+
+            header.innerHTML = `<h3 class="text-xl font-bold leading-tight">${data.title}</h3>`;
+            
+            // 簡易詳情
+            const detailText = data.detail ? data.detail : data.desc;
+            body.innerText = detailText;
+
+            // 儲存完整內容供全螢幕使用
+            // 如果沒有 fullContent，就用 detail 加強版代替
+            currentFullContent = data.fullContent ? data.fullContent : `<h4 class="text-xl font-bold text-emerald-700 mb-4">${data.title}</h4><p class="whitespace-pre-wrap">${detailText}</p>`;
+
+            // 顯示抽屜
+            drawer.classList.remove('hidden');
+            setTimeout(() => { content.classList.remove('translate-x-full'); }, 10);
+            
+            // 綁定全螢幕按鈕事件
+            btnFullScreen.onclick = openFullScreen;
+        }
+
+        function closeDrawer() {
+            const drawer = document.getElementById('detail-drawer');
+            const content = drawer.querySelector('.drawer-content');
+            content.classList.add('translate-x-full');
+            setTimeout(() => { drawer.classList.add('hidden'); }, 300);
+        }
+
+        // 全螢幕視窗
+        function openFullScreen() {
+            const modal = document.getElementById('full-screen-modal');
+            const content = document.getElementById('full-screen-content');
+            content.innerHTML = currentFullContent;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex', 'modal-enter');
+            // 關閉抽屜
+            closeDrawer();
+        }
+
+        function closeFullScreen() {
+            const modal = document.getElementById('full-screen-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex', 'modal-enter');
+        }
+
+        // 底部資訊彈窗 (使用全螢幕 Modal 顯示更豐富資訊)
+        function showInfo(type) {
+            let title = "";
+            let content = "";
+            
+            if (type === 'strategy') {
+                title = "☀️ 天氣策略 & 動物指南";
+                content = `
+                    <h4 class="text-xl font-bold text-emerald-700 mb-4">☀️ 天氣決勝 (等級 S)</h4>
+                    <p class="mb-4">以下景點極度依賴好天氣，請根據當天狀況靈活調整順序：</p>
+                    <ul class="list-disc pl-5 space-y-2 mb-6">
+                        <li><strong>Mt Oberon Summit</strong>：如果是陰天或霧天，山頂會一片白牆，什麼都看不到。一定要選晴天去。</li>
+                        <li><strong>Squeaky Beach</strong>：陽光直射下，海水才會呈現寶石藍色。</li>
+                        <li><strong>The Pinnacle</strong>：俯瞰山谷需要清晰視野，且雨天岩石濕滑危險。</li>
+                    </ul>
+                    
+                    <h4 class="text-xl font-bold text-emerald-700 mb-4">🐨 動物尋蹤指南</h4>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>袋熊 (Wombat)</strong>：Tidal River 營區 (17:00-19:00)。</li>
+                        <li><strong>袋鼠 (Kangaroo)</strong>：Halls Gap 湖畔或營地後方草地 (清晨/黃昏)。</li>
+                        <li><strong>鴯鶓 (Emu)</strong>：Wilsons Prom 的草地。</li>
+                    </ul>
+                `;
+            } else if (type === 'fruits') {
+                title = "🍋 當季水果指南 (10月)";
+                content = `
+                    <h4 class="text-xl font-bold text-emerald-700 mb-4">🟢 當季盛產 (價格優/必吃)</h4>
+                    <ul class="list-disc pl-5 space-y-3 mb-6">
+                        <li><strong>草莓 (Strawberries)</strong>：10月是維多利亞州的草莓旺季，價格便宜且香甜。</li>
+                        <li><strong>無籽綠葡萄 (Green Grapes)</strong>：澳洲的葡萄皮薄脆甜，洗一洗就能帶著當零食。</li>
+                    </ul>
+
+                    <h4 class="text-xl font-bold text-emerald-700 mb-4">🟠 產季尾聲/剛開始 (值得找)</h4>
+                    <ul class="list-disc pl-5 space-y-3 mb-6">
+                        <li><strong>血橙 (Blood Orange)</strong>：產季約在 8-10 月，如果您在 10 月初還有看到，請務必買！這是澳洲特有美味，果肉深紅甜度高。</li>
+                        <li><strong>藍莓 (Blueberries)</strong>：新產季剛開始，可能稍微貴一點，但品質很棒。</li>
+                    </ul>
+
+                    <h4 class="text-xl font-bold text-slate-500 mb-4">⚪ 非產季 (特色嘗試)</h4>
+                    <ul class="list-disc pl-5 space-y-3 mb-6 text-slate-500">
+                        <li><strong>指橙 (Finger Lime)</strong>：主要產季在秋季 (3-5月)，10月較難在一般超市看到。如果想吃，可能要去高檔超市或農夫市集碰運氣 (價格會較高)。</li>
+                        <li><strong>櫻桃 (Cherries)</strong>：產季通常 11 月中才開始，10 月還太早，超市看到的通常是進口貨。</li>
+                        <li><strong>黑莓 (Blackberries)</strong>：夏季水果 (12-2月)，10月非產季。</li>
+                    </ul>
+                `;
+            } else if (type === 'shopping') {
+                title = "🛒 必買清單 (詳細版)";
+                content = `
+                    <h4 class="text-xl font-bold text-emerald-700 mb-4">☕ 茶類 (超市/專賣店)</h4>
+                    <ul class="list-disc pl-5 space-y-3 mb-6">
+                        <li><strong>Twinings Australian Afternoon</strong>：澳洲限定款，茶湯濃郁，適合加牛奶。超市常有 50% OFF (約 $6.75/100入)。</li>
+                        <li><strong>Twinings Russian Caravan</strong>：獨特煙燻香氣，適合搭配酸種麵包。</li>
+                        <li><strong>T2 Melbourne Breakfast</strong>：澳洲精品茶，經典香草味。建議買 25入盒裝 (約 $18) 或散茶鐵罐。</li>
+                    </ul>
+
+                    <h4 class="text-xl font-bold text-emerald-700 mb-4">🍯 蜂蜜 (Pure Peninsula Honey)</h4>
+                    <ul class="list-disc pl-5 space-y-3 mb-6">
+                        <li><strong>Yellow Box (黃盒桉)</strong>：口感滑順，不易結晶，澳洲蜂蜜的首選。</li>
+                        <li><strong>Grey Box (灰盒桉)</strong>：甜度適中，也是不錯的選擇。</li>
+                    </ul>
+
+                    <h4 class="text-xl font-bold text-emerald-700 mb-4">🧴 藥妝與精油</h4>
+                    <ul class="list-disc pl-5 space-y-3 mb-6">
+                        <li><strong>Lucas Papaw Ointment (木瓜霜)</strong>：澳洲國民萬用膏，送禮自用兩相宜。</li>
+                        <li><strong>Emu Oil (鴯鶓油)</strong>：滋潤修復，適合送長輩。</li>
+                        <li><strong>Springfields 精油</strong>：有機認證，推薦尤加利或檸檬香桃木 (Lemon Myrtle)。</li>
+                        <li><strong>Kwells 暈車藥</strong>：澳洲神藥，不嗜睡，適合這趟山路行程 (約 $5.5)。</li>
+                    </ul>
+
+                    <h4 class="text-xl font-bold text-emerald-700 mb-4">🍫 零食</h4>
+                    <ul class="list-disc pl-5 space-y-3 mb-6">
+                        <li><strong>Red Rock Deli 洋芋片</strong>：蜂蜜雞汁 (Honey Soy Chicken) 是經典。</li>
+                        <li><strong>TimTam</strong>：各種限定口味。</li>
+                        <li><strong>Pods</strong>：澳洲特有巧克力餅乾，咬開有餡。</li>
+                    </ul>
+                `;
+            }
+
+            const modal = document.getElementById('full-screen-modal');
+            const modalContent = document.getElementById('full-screen-content');
+            
+            // 填充內容
+            document.querySelector('#full-screen-modal h3').innerText = title;
+            modalContent.innerHTML = content;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex', 'modal-enter');
+        }
+
+        window.onload = () => { renderTabs(); renderContent(); };
+    </script>
+</body>
+</html>
