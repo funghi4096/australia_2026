@@ -75,7 +75,23 @@
         /* 駕駛時間連接線 */
         .drive-line { position: relative; display: flex; flex-direction: column; align-items: center; margin: -8px 0; z-index: 0; }
         .drive-dashed { height: 32px; border-left: 2px dashed #cbd5e1; }
-        .drive-badge { background: #f1f5f9; color: #64748b; font-size: 10px; font-weight: bold; padding: 4px 12px; border-radius: 9999px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.2s; display: flex; align-items: center; gap: 4px; z-index: 10; }
+        /* 修改為適用於 a 標籤的樣式 */
+        .drive-badge { 
+            background: #f1f5f9; 
+            color: #64748b; 
+            font-size: 10px; 
+            font-weight: bold; 
+            padding: 4px 12px; 
+            border-radius: 9999px; 
+            cursor: pointer; 
+            border: 1px solid #e2e8f0; 
+            transition: all 0.2s; 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+            z-index: 10; 
+            text-decoration: none; /* 確保無底線 */
+        }
         .drive-badge:active { transform: scale(0.95); background: #059669; color: white; border-color: #059669; }
     </style>
 </head>
@@ -866,9 +882,12 @@
                     driveHtml = `
                         <div class="drive-line fade-in" style="animation-delay: ${i*0.1}s">
                             <div class="drive-dashed"></div>
-                            <div onclick="openNav('${item.loc}')" class="drive-badge shadow-sm hover:shadow-md">
+                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.loc)}" 
+                               target="_blank"
+                               class="drive-badge shadow-sm hover:shadow-md !no-underline"
+                               onclick="event.stopPropagation()">
                                 ${item.driveTime} <i class="fa-solid fa-arrow-down text-[8px] ml-1"></i>
-                            </div>
+                            </a>
                             <div class="drive-dashed"></div>
                         </div>
                     `;
